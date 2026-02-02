@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Sistema de Carga - Municipio</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    #header {
+      padding: 10px;
+      background: #2c3e50;
+      color: white;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    #map {
+      flex-grow: 1;
+    }
+
+    button:disabled {
+      background: #95a5a6 !important;
+      cursor: not-allowed;
+    }
+
+    .info-panel {
+      background: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      color: #2c3e50;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="header">
+    <input type="number" id="nro_encuesta" placeholder="N° de Encuesta">
+    <input type="email" id="email_pasante" placeholder="E-mail del pasante">
+    <button id="btnGuardar" onclick="enviarDatos()"
+      style="background: #27ae60; color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer;">GUARDAR
+      RECORRIDO</button>
+    <span id="status"></span>
+  </div>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const G_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCD3vFYMH2qUp05t431N2C1ILW4X_n9HfXM8bRx5W6tGZcWOwyYVp8mPif_qzYN3apBg/exec"; // Asegúrate de usar la última versión desplegada
+    let map = L.map('map').setView([-32.027, -61.22], 15); // Ajusta a las coordenadas de tu ciudad
+    let seleccionados = new Set();
+    let capaCalles;
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    // Al cargar la página, recuperamos el último número usado en ESTA PC
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedEmail = localStorage.getItem('pasante_email');
+      const lastID = localStorage.getItem('ultima_encuesta');
+
+      if (savedEmail) document.getElementById('email_pasante').value = savedEmail;
+
+      // Si ya existe un número guardado, le sumamos 1. 
+      // Si no, lo dejamos vacío para que el pasante setee su inicio de lote.
+      if (lastID) {
+        document.getElementById('nro_encuesta').value = parseInt(lastID) + 1;
+      }
+    });
+
+    fetch('calles.geojson')
+      .then(res => res.json())
+      .then(data => {
+        capaCalles = L.geoJSON(data, {
+          style: { color: "#34495e", weight: 10, opacity: 0.3 },
+          onEachFeature: (feature, layer) => {
+            if (feature.properties.NONCLLMG) layer.bindTooltip(feature.properties.NONCLLMG);
+
+            layer.on('click', function () {
+              if (seleccionados.has(feature.properties.fid)) {
+                seleccionados.delete(feature.properties.fid);
+                layer.setStyle({ color: "#34495e", weight: 10, opacity: 0.3 });
+              } else {
+                seleccionados.add(feature.properties.fid);
+                layer.setStyle({ color: "#e74c3c", weight: 10, opacity: 0.8 });
+              }
+            });
+          }
+        }).addTo(map);
+      });
+
+    async function enviarDatos() {
+      const inputEncuesta = document.getElementById('nro_encuesta');
+      const inputEmail = document.getElementById('email_pasante');
+      const btn = document.getElementById('btnGuardar');
+      const status = document.getElementById('status');
+
+      const encuesta = inputEncuesta.value;
+      const email = inputEmail.value;
+
+      // Validaciones básicas
+      if (!encuesta || !email || seleccionados.size === 0) {
+        alert("Ingresa encuesta, e-mail y selecciona al menos una calle.");
+        return;
+      }
+
+      // Guardamos los datos del pasante y el ID actual en el navegador
+      localStorage.setItem('pasante_email', email);
+      localStorage.setItem('ultima_encuesta', encuesta);
+
+      // VALIDACIÓN DE DUPLICADO ANTES DE ENVIAR
+      btn.disabled = true;
+      status.innerText = "Validando encuesta...";
+
+      // Necesitamos agregar la función doGet en el Apps Script para que esto funcione
+      const existe = await verificarDuplicado(encuesta);
+      if (existe) {
+        alert("¡Error! La encuesta N° " + encuesta + " ya fue cargada anteriormente.");
+        status.innerText = "Encuesta duplicada";
+        btn.disabled = false;
+        return;
+      }
+
+      // Bloquear interfaz
+      btn.disabled = true;
+      status.innerText = "Verificando y enviando...";
+
+      try {
+        // Enviamos los datos
+        await fetch(G_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors", // Google Apps Script requiere no-cors o manejar preflight
+          body: JSON.stringify({
+            encuesta: encuesta,
+            pasante: email,
+            calles: Array.from(seleccionados)
+          })
+        });
+
+        status.style.color = "#2ecc71";
+        status.innerText ="¡Encuesta " + encuesta + " guardada!"
+
+        // Limpiar selección sin recargar toda la página (más rápido)
+        setTimeout(() => {
+          seleccionados.clear();
+          capaCalles.setStyle({ color: "#34495e", weight: 10, opacity: 0.3 });
+
+          // incremento local
+          const proximoID = parseInt(encuesta) + 1;
+          localStorage.setItem('ultima_encuesta', proximoID - 1); // Guardamos el último éxito
+          inputEncuesta.value = parseInt(encuesta) + 1; // seteamos la próxma encuesta
+
+          status.innerText = "";
+          btn.disabled = false;
+        }, 1200);
+
+      } catch (err) {
+        alert("Error al enviar: " + err);
+        btn.disabled = false;
+        status.innerText = "Error";
+      }
+    }
+
+    async function verificarDuplicado(nroEncuesta) {
+      // Esta función llama al script de Google pero con un parámetro de consulta
+      try {
+        const response = await fetch(G_SCRIPT_URL + "?verificar=" + nroEncuesta);
+        const resultado = await response.text();
+        return resultado === "EXISTE";
+      } catch (e) {
+        return false; // Si falla la red, permitimos intentar el envío
+      }
+    }
+  </script>
+</body>
+
+</html>
