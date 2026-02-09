@@ -39,6 +39,26 @@
       color: #2c3e50;
       font-weight: bold;
     }
+
+    .label-calles {
+      background: rgba(255, 255, 255, 0.8);
+      border: none;
+      border-radius: 4px;
+      color: #000000;
+      font-weight: bold;
+      font-size: 11px;
+      box-shadow: none;
+    }
+
+    .label-escuelas {
+      background: rgba(255, 255, 255, 0.5);
+      border: none;
+      border-radius: 4px;
+      color: #c0392b;
+      font-weight: bold;
+      font-size: 11px;
+      box-shadow: none;
+    }
   </style>
 </head>
 
@@ -77,13 +97,42 @@
       }
     });
 
+    // --- CARGAR CAPA DE ESCUELAS ---
+    fetch('escuelas.geojson')
+      .then(res => res.json())
+      .then(data => {
+        L.geoJSON(data, {
+          pointToLayer: function (feature, latlng) {
+            // Creamos un marcador circular rojo
+            return L.circleMarker(latlng, {
+              radius: 8,
+              fillColor: "#ff0000",
+              color: "#ffffff",
+              weight: 2,
+              opacity: 1,
+              fillOpacity: 0.9
+            });
+          },
+          onEachFeature: (feature, layer) => {
+            // Que el nombre de la escuela esté siempre visible o al pasar el mouse
+            if (feature.properties.nombre) {
+              layer.bindTooltip(feature.properties.nombre, {
+                permanent: true, // true para que el nombre se vea siempre, false para que aparezca al pasar el mouse
+                direction: 'top',
+                className: 'label-escuelas'
+              });
+            }
+          }
+        }).addTo(map);
+      });
+    // --- CARGAR CAPA DE CALLES ---
     fetch('calles.geojson')
       .then(res => res.json())
       .then(data => {
         capaCalles = L.geoJSON(data, {
           style: { color: "#34495e", weight: 10, opacity: 0.3 },
           onEachFeature: (feature, layer) => {
-            if (feature.properties.NONCLLMG) layer.bindTooltip(feature.properties.NONCLLMG);
+            if (feature.properties.NONCLLMG) layer.bindTooltip(feature.properties.NONCLLMG, { className: 'label-calles' });
 
             layer.on('click', function () {
               if (seleccionados.has(feature.properties.fid)) {
@@ -147,7 +196,7 @@
         });
 
         status.style.color = "#2ecc71";
-        status.innerText ="¡Encuesta " + encuesta + " guardada!"
+        status.innerText = "¡Encuesta " + encuesta + " guardada!"
 
         // Limpiar selección sin recargar toda la página (más rápido)
         setTimeout(() => {

@@ -1,0 +1,23 @@
+{
+"type": "FeatureCollection",
+"name": "escuelas",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "fid": 2, "nombre_largo": "CENTRO DE EDUCACION FISICA NRO 42 \"PROFESOR EDGARD BALAUDO\"", "nivel": "Primario", "nombre": "CEF" }, "geometry": { "type": "Point", "coordinates": [ -61.228915733428856, -32.033628168226002 ] } },
+{ "type": "Feature", "properties": { "fid": 3, "nombre_largo": "E.E.M.P.A. NRO 1304", "nivel": "Secundario", "nombre": "6035 / EEMPA" }, "geometry": { "type": "Point", "coordinates": [ -61.223827373622129, -32.038564296160949 ] } },
+{ "type": "Feature", "properties": { "fid": 5, "nombre_largo": "E.E. TÉCNICO PROFESIONAL NRO 456 \"HIPÓLITO YRIGOYEN\"", "nivel": "Secundario", "nombre": "EET" }, "geometry": { "type": "Point", "coordinates": [ -61.222839420796163, -32.024217447929118 ] } },
+{ "type": "Feature", "properties": { "fid": 6, "nombre_largo": "E.E. TÉCNICO PROFESIONAL NRO 670 \"GENERAL ANTONIO GONZÁLEZ BALCARCE\"", "nivel": "Secundario", "nombre": "670" }, "geometry": { "type": "Point", "coordinates": [ -61.225233273313691, -32.029263874297662 ] } },
+{ "type": "Feature", "properties": { "fid": 7, "nombre_largo": "ESCUELA ESPECIAL NRO 2041 \"DOCTOR JOSE GALVEZ\"", "nivel": "Institutos especiales", "nombre": "ESPECIAL 2041" }, "geometry": { "type": "Point", "coordinates": [ -61.222133131940062, -32.03139484321045 ] } },
+{ "type": "Feature", "properties": { "fid": 8, "nombre_largo": "ESCUELA NRO 290 \"SIMON DE IRIONDO\"", "nivel": "Primario", "nombre": "290" }, "geometry": { "type": "Point", "coordinates": [ -61.221750061633891, -32.029705520079432 ] } },
+{ "type": "Feature", "properties": { "fid": 9, "nombre_largo": "ESCUELA NRO 305 \"GENERAL JOSE DE SAN MARTIN\"", "nivel": "Primario", "nombre": "305" }, "geometry": { "type": "Point", "coordinates": [ -61.228448803563872, -32.033361620974851 ] } },
+{ "type": "Feature", "properties": { "fid": 10, "nombre_largo": "ESCUELA NRO 6034 \"JOSE PEDRONI\"", "nivel": "Primario", "nombre": "6034" }, "geometry": { "type": "Point", "coordinates": [ -61.212887791211323, -32.033477194969592 ] } },
+{ "type": "Feature", "properties": { "fid": 12, "nombre_largo": "ESCUELA NRO 877 \"DOMINGO FAUSTINO SARMIENTO\"", "nivel": "Primario", "nombre": "877" }, "geometry": { "type": "Point", "coordinates": [ -61.220216405941187, -32.021738381122965 ] } },
+{ "type": "Feature", "properties": { "fid": 14, "nombre_largo": "ESCUELA PART. INC. NRO 1409 \"COLEGIO DEL SOL\"", "nivel": "Primario", "nombre": "DEL SOL" }, "geometry": { "type": "Point", "coordinates": [ -61.216560154508187, -32.03060668508396 ] } },
+{ "type": "Feature", "properties": { "fid": 15, "nombre_largo": "ESCUELA SUPERIOR DE COMERCIO NRO 44", "nivel": "Secundario", "nombre": "COMERCIO" }, "geometry": { "type": "Point", "coordinates": [ -61.222024872856309, -32.027867186748182 ] } },
+{ "type": "Feature", "properties": { "fid": 16, "nombre_largo": "I.S.P.I. NRO 9133 \"NUESTRA SEÑORA DEL CALVARIO\"", "nivel": "Terciario", "nombre": "CALVARIO" }, "geometry": { "type": "Point", "coordinates": [ -61.212942745701959, -32.035697564225188 ] } },
+{ "type": "Feature", "properties": { "fid": 17, "nombre_largo": "JARDIN DE INFANTES NRO 108 \"LUISA QUESTA DE LARRECHEA\"", "nivel": "Inicial", "nombre": "Jardín 108" }, "geometry": { "type": "Point", "coordinates": [ -61.225345459153601, -32.030621396117432 ] } },
+{ "type": "Feature", "properties": { "fid": 18, "nombre_largo": "JARDIN DE INFANTES NRO 225 \"DOMINGA B. DE FERRERO\"", "nivel": "Inicial", "nombre": "Jardín 225" }, "geometry": { "type": "Point", "coordinates": [ -61.208978129321913, -32.030118036609977 ] } },
+{ "type": "Feature", "properties": { "fid": 21, "nombre_largo": "CENTRO UNVERSITARIO GÁLVEZ - UNIVERSIDAD NACIONAL DEL LITORAL", "nivel": "Universitario", "nombre": "UNL" }, "geometry": { "type": "Point", "coordinates": [ -61.209262184513534, -32.039539632037012 ] } },
+{ "type": "Feature", "properties": { "fid": 22, "nombre_largo": "NUCLEO I - JARDIN DE INFANTES NRO 108 \"LUISA QUESTA DE LARRECHEA\"", "nivel": "Inicial", "nombre": "Jardín 108 I" }, "geometry": { "type": "Point", "coordinates": [ -61.223899958583708, -32.039036510676262 ] } }
+]
+}
